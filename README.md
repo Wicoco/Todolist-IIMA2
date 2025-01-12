@@ -32,8 +32,7 @@ npm run dev
 
 Dans Supabase, accédez à la section **SQL Editor** et exécutez les requêtes suivantes pour créer les tables nécessaires.
 
-### **Table `tasks`**
-```sql
+-- Création de la table tasks
 CREATE TABLE tasks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -44,22 +43,30 @@ CREATE TABLE tasks (
   color TEXT DEFAULT '#FFFFFF',
   created_at TIMESTAMP DEFAULT NOW()
 );
-```
 
-### **Autorisations Nécessaires**
-
-```sql
-CREATE POLICY "Allow logged-in users"
+-- Politique pour permettre aux utilisateurs connectés de voir leurs tâches
+CREATE POLICY "Allow logged-in users to select their tasks"
 ON public.tasks
 FOR SELECT
 USING (auth.uid() = user_id);
+
+-- Politique pour permettre aux utilisateurs connectés d'insérer des tâches
+CREATE POLICY "Allow logged-in users to insert tasks"
+ON public.tasks
 FOR INSERT
 WITH CHECK (auth.uid() = user_id);
+
+-- Politique pour permettre aux utilisateurs connectés de mettre à jour leurs tâches
+CREATE POLICY "Allow logged-in users to update their tasks"
+ON public.tasks
 FOR UPDATE
 USING (auth.uid() = user_id);
+
+-- Politique pour permettre aux utilisateurs connectés de supprimer leurs tâches
+CREATE POLICY "Allow logged-in users to delete their tasks"
+ON public.tasks
 FOR DELETE
 USING (auth.uid() = user_id);
-```
 
 ---
 
